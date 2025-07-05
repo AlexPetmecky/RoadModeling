@@ -51,7 +51,7 @@ class DrawRoads:
         #    print(x,y)
         for car in cars:
             #print(car.x,car.y)
-            carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y]
+            carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y and y['elevation'] == car.currentElevation]
             #print(carNodes)
             for road in carNodes:
                 road.color = car.color
@@ -59,11 +59,12 @@ class DrawRoads:
         self.setRoads(self.roads)
 
     def updateCars(self):
+        print(self.roads.nodes(data=True))
         for car in self.cars:
             try:
-                carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y]
+                carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y and y['elevation'] == car.currentElevation]
                 #print(carNodes)
-                #print("Possible Nodes: ",carNodes)
+                print("Possible Nodes: ",carNodes)
                 road = carNodes[0]
                 #print(road)
                 nextRoads = list(self.roads.successors(road))
@@ -77,8 +78,10 @@ class DrawRoads:
                     #car.x+=10#NEEDS TO BE CHANGED
                     car.x = nextRoad.x
                     car.y = nextRoad.y
+                    car.elevation = nextRoad.elevation
                 print("MOVING")
-            except:
+            except Exception as e:
+                print(e)
                 print("NOT MOVING")
                 pass
             #self.roads.

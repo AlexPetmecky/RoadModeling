@@ -116,14 +116,15 @@ class BuildRoadNetwork:
         roads = []
         x = startX
         y = startY
-        r = Road(x, y, width, height)
+        r = Road(x, y, width, height,elevation=elevation)
+        #roads.append(r)
         roads.append(r)
-        self.RoadNetwork.add_node(r, x=x, y=y)
+        self.RoadNetwork.add_node(r, x=x, y=y,elevation=elevation)
         for i in range(segmentNumber - 1):
             x, y = direction_function(x, y, width, height)
             r = Road(x, y, width, height,elevation=elevation)
             roads.append(r)
-            self.RoadNetwork.add_node(r, x=x, y=y)
+            self.RoadNetwork.add_node(r, x=x, y=y,elevation=elevation)
         print("LEN OF ROADS: ", len(roads))
         return roads
 
@@ -172,7 +173,7 @@ class BuildRoadNetwork:
         #self.make_edge(r3[-1],r1[0])
 
         r1 = self.setSegment(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
-        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
+        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
         self.setEdges(r1,wraps=True)
         self.setEdges(r2,wraps=True)
 
