@@ -26,6 +26,7 @@ class DrawRoads:
             #r = pygame.Rect((road.x,road.y,road.width,road.height))
             #pygame.draw.rect(self.screen,road.color,r)
 
+            #print(road.color)
             r = pygame.Surface((road.width,road.height),pygame.SRCALPHA)
             r.fill(road.color)
 
@@ -52,6 +53,7 @@ class DrawRoads:
         for car in cars:
             #print(car.x,car.y)
             carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y and y['elevation'] == car.currentElevation]
+            print("Car Nodes: ", carNodes)
             #print(carNodes)
             for road in carNodes:
                 road.color = car.color
@@ -61,10 +63,12 @@ class DrawRoads:
     def updateCars(self):
         print(self.roads.nodes(data=True))
         for car in self.cars:
+            print(car.x, car.y, car.currentElevation)
             try:
                 carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y and y['elevation'] == car.currentElevation]
                 #print(carNodes)
                 print("Possible Nodes: ",carNodes)
+
                 road = carNodes[0]
                 #print(road)
                 nextRoads = list(self.roads.successors(road))
@@ -78,7 +82,7 @@ class DrawRoads:
                     #car.x+=10#NEEDS TO BE CHANGED
                     car.x = nextRoad.x
                     car.y = nextRoad.y
-                    car.elevation = nextRoad.elevation
+                    car.currentElevation = nextRoad.elevation
                 print("MOVING")
             except Exception as e:
                 print(e)

@@ -134,6 +134,37 @@ class BuildRoadNetwork:
         #if wraps:
         #    self.RoadNetwork.add_edge(roads[len(roads) - 1], roads[0])
 
+    def segmentWithElevationChange(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevationStart=0,elevationEnd=0):
+        #x = x1 + (x2 - x1) * t
+        #y = y1 + (y2 - y1) * t
+
+
+       #elevations = self.getE
+        elevations = self.getEquidistantPoints(elevationStart,elevationEnd,segmentNumber)
+
+        #elevationStep = elevationStart+(elevationEnd-elevationStart) * segmentNumber
+        #print("Elevation STEP: ", elevationStep)
+        direction_function = self.action_functions[direction]
+        roads = []
+        x = startX
+        y = startY
+        r = Road(x, y, width, height, elevation=elevations[0])
+        # roads.append(r)
+        roads.append(r)
+        self.RoadNetwork.add_node(r, x=x, y=y, elevation=elevationStart)
+        for i in range(segmentNumber - 1):
+            #elevationCurrent = elevationStep * (i+2)
+
+            x, y = direction_function(x, y, width, height)
+            r = Road(x, y, width, height, elevation=round(elevations[i+1]))
+            roads.append(r)
+            self.RoadNetwork.add_node(r, x=x, y=y, elevation=round(elevations[i+1]))
+        print("LEN OF ROADS: ", len(roads))
+        return roads
+
+
+
+
     def setEdges(self,roads,wraps=False):
      for i in range(len(roads) - 1):
         self.RoadNetwork.add_edge(roads[i], roads[i + 1])
@@ -172,10 +203,19 @@ class BuildRoadNetwork:
         #self.make_edge(r1[-1],r3[0])
         #self.make_edge(r3[-1],r1[0])
 
-        r1 = self.setSegment(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
-        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
-        self.setEdges(r1,wraps=True)
-        self.setEdges(r2,wraps=True)
-
+        #r1 = self.setSegment(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
+        #r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
+        #self.setEdges(r1,wraps=True)
+        #self.setEdges(r2,wraps=True)
+        r1 = self.segmentWithElevationChange(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=0,elevationEnd=100)
+        self.setEdges(r1,True)
         return self.RoadNetwork
+
+
+    def lerp(self,x0,x1,i):
+        return x0+i*(x1-x0)
+    def getEquidistantPoints(self,start,end,steps):
+        return [self.lerp(start,end,1/steps*i) for i in range(steps+1)]
+
+
 
