@@ -9,7 +9,7 @@ class Road:
         self.width = width
         self.height = height
         self.color = (color[0]-elevation,color[1]-elevation,color[2]-elevation)
-        self.origionalColor = origionalColor
+        self.origionalColor =  (color[0]-elevation,color[1]-elevation,color[2]-elevation)
 
 
         self.inbound = []
