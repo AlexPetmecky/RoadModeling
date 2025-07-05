@@ -69,8 +69,9 @@ class DrawRoads:
                 nextRoads = list(self.roads.successors(road))
                 print("Possible roads: ",nextRoads)
                 nextRoad = random.choice(nextRoads)
-                if nextRoad.color != (0,0,255):
-                    road.color = (255,255,255)
+                if nextRoad.color == nextRoad.origionalColor:
+                    #road.color = (255,255,255)
+                    road.color = road.origionalColor
                     nextRoad.color = car.color
                     #nextRoad.color = (0,0,255)
                     #car.x+=10#NEEDS TO BE CHANGED

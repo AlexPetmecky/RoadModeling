@@ -111,7 +111,7 @@ class BuildRoadNetwork:
         print("ROADS: ",len(roads))
         return roads
 
-    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5):
+    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevation=0):
         direction_function = self.action_functions[direction]
         roads = []
         x = startX
@@ -121,7 +121,7 @@ class BuildRoadNetwork:
         self.RoadNetwork.add_node(r, x=x, y=y)
         for i in range(segmentNumber - 1):
             x, y = direction_function(x, y, width, height)
-            r = Road(x, y, width, height)
+            r = Road(x, y, width, height,elevation=elevation)
             roads.append(r)
             self.RoadNetwork.add_node(r, x=x, y=y)
         print("LEN OF ROADS: ", len(roads))
@@ -157,15 +157,24 @@ class BuildRoadNetwork:
         #self.setEdges(r3,wraps=False)
         #self.make_edge(r1[0],r3[0])
 
-        r1 = self.setSegment(10, 10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
-        r2 = self.getArc(x0=110, y0=10, radius=50, num_points=10, angle=180, width=ROAD_WIDTH, height=ROAD_HEIGHT)
-        r_set = r1+r2
-        self.setEdges(r_set,wraps=True)
+        # for r in r2:
+        #    print(r.x," ",r.y)
+        # exit()
 
-        r3 = self.setSegment(120,10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
-        self.setEdges(r3,wraps=False)
-        self.make_edge(r1[-1],r3[0])
-        self.make_edge(r3[-1],r1[0])
+        #r1 = self.setSegment(10, 10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
+        #r2 = self.getArc(x0=110, y0=20, radius=50, num_points=11, angle=180, width=ROAD_WIDTH, height=ROAD_HEIGHT)
+        #r_set = r1+r2
+        #self.setEdges(r_set,wraps=True)
+
+        #r3 = self.setSegment(110,10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
+        #self.setEdges(r3,wraps=False)
+        #self.make_edge(r1[-1],r3[0])
+        #self.make_edge(r3[-1],r1[0])
+
+        r1 = self.setSegment(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
+        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
+        self.setEdges(r1,wraps=True)
+        self.setEdges(r2,wraps=True)
 
         return self.RoadNetwork
 

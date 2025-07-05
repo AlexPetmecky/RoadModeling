@@ -24,10 +24,16 @@ if __name__ == '__main__':
     dr.setRoads(roads)
 
     car = Car(10,10,ROAD_WIDTH,ROAD_HEIGHT,color=(255,0,0))
-    car2 = Car(20,10,ROAD_WIDTH,ROAD_HEIGHT)
-    car3 = Car(50, 10, ROAD_WIDTH, ROAD_HEIGHT)
+    car2 = Car(20,10,ROAD_WIDTH,ROAD_HEIGHT, color=(0,255,0))
+    car3 = Car(50, 10, ROAD_WIDTH, ROAD_HEIGHT, color=(0,0,255))
+    car4 = Car(70, 10, ROAD_WIDTH, ROAD_HEIGHT, color=(0, 255, 255))
+    car5 = Car(90, 10, ROAD_WIDTH, ROAD_HEIGHT, color=(255, 0, 255))
 
-    cars = [car,car2,car3]
+    #cars = [car,car2,car3,car4,car5]
+
+    c = Car(50,10,ROAD_WIDTH,ROAD_HEIGHT,color=(0,255,255),currentElevation=0)
+    c2 = Car(10,50,ROAD_WIDTH,ROAD_HEIGHT, color=(255,0,255),currentElevation=0)
+    cars = [c,c2]
     dr.setCars(cars)
 
 
