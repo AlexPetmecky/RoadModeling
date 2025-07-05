@@ -111,7 +111,7 @@ class BuildRoadNetwork:
         print("ROADS: ",len(roads))
         return roads
 
-    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,wraps=False):
+    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5):
         direction_function = self.action_functions[direction]
         roads = []
         x = startX
@@ -149,12 +149,23 @@ class BuildRoadNetwork:
         #self.make_arc(x0=100,y0=200,radius=100,num_points=10,angle=90,j=100,k=100)#r=0,num_points=0,angle=0,j=0,k=0
 
 
-        r1 = self.setSegment(10, 10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT, True)
-        r2 = self.getArc(x0=110,y0=10,radius=100,num_points=10,angle=90,width=ROAD_WIDTH,height=ROAD_HEIGHT)
-        r3 = self.setSegment(startX=10,startY=20,direction="S",segmentNumber=5,width=ROAD_WIDTH,height=ROAD_HEIGHT)
+        #r1 = self.setSegment(10, 10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT, True)
+        #r2 = self.getArc(x0=110,y0=10,radius=100,num_points=10,angle=90,width=ROAD_WIDTH,height=ROAD_HEIGHT)
+        #r3 = self.setSegment(startX=10,startY=20,direction="S",segmentNumber=5,width=ROAD_WIDTH,height=ROAD_HEIGHT)
+        #r_set = r1+r2
+        #self.setEdges(r_set,wraps=True)
+        #self.setEdges(r3,wraps=False)
+        #self.make_edge(r1[0],r3[0])
+
+        r1 = self.setSegment(10, 10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
+        r2 = self.getArc(x0=110, y0=10, radius=50, num_points=10, angle=180, width=ROAD_WIDTH, height=ROAD_HEIGHT)
         r_set = r1+r2
         self.setEdges(r_set,wraps=True)
+
+        r3 = self.setSegment(120,10, "E", 10, ROAD_WIDTH, ROAD_HEIGHT)
         self.setEdges(r3,wraps=False)
-        self.make_edge(r1[0],r3[0])
+        self.make_edge(r1[-1],r3[0])
+        self.make_edge(r3[-1],r1[0])
+
         return self.RoadNetwork
 

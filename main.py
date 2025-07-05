@@ -11,7 +11,7 @@ ROAD_HEIGHT = 10
 if __name__ == '__main__':
 
 
-    dr = DrawRoads()
+    dr = DrawRoads(refreshRate=5)
     BuildRN = BuildRoadNetwork()
 
     #road1 = Road(10,10)
@@ -23,9 +23,11 @@ if __name__ == '__main__':
     print(roads.edges())
     dr.setRoads(roads)
 
-    car = Car(10,10,ROAD_WIDTH,ROAD_HEIGHT)
+    car = Car(10,10,ROAD_WIDTH,ROAD_HEIGHT,color=(255,0,0))
     car2 = Car(20,10,ROAD_WIDTH,ROAD_HEIGHT)
-    cars = [car,car2]
+    car3 = Car(50, 10, ROAD_WIDTH, ROAD_HEIGHT)
+
+    cars = [car,car2,car3]
     dr.setCars(cars)
 
 

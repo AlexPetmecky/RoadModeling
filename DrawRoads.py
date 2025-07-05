@@ -22,7 +22,7 @@ class DrawRoads:
         self.roads = roads
 
         for road in roads:
-            print("DRAWING")
+            #print("DRAWING")
             #r = pygame.Rect((road.x,road.y,road.width,road.height))
             #pygame.draw.rect(self.screen,road.color,r)
 
@@ -42,7 +42,7 @@ class DrawRoads:
 
         pygame.display.update()
         #pygame.display.flip()
-        print(self.roads.nodes(data=True))
+        #print(self.roads.nodes(data=True))
 
 
     def setCars(self,cars=[]):
@@ -50,25 +50,29 @@ class DrawRoads:
         #for x,y in self.roads.nodes()(data=True):
         #    print(x,y)
         for car in cars:
-            print(car.x,car.y)
+            #print(car.x,car.y)
             carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y]
-            print(carNodes)
+            #print(carNodes)
             for road in carNodes:
-                road.color = (0,0,255)
+                road.color = car.color
+                #road.color = (0,0,255)
         self.setRoads(self.roads)
 
     def updateCars(self):
         for car in self.cars:
             try:
                 carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y]
-                print(carNodes)
+                #print(carNodes)
+                #print("Possible Nodes: ",carNodes)
                 road = carNodes[0]
-                print(road)
+                #print(road)
                 nextRoads = list(self.roads.successors(road))
+                print("Possible roads: ",nextRoads)
                 nextRoad = random.choice(nextRoads)
                 if nextRoad.color != (0,0,255):
                     road.color = (255,255,255)
-                    nextRoad.color = (0,0,255)
+                    nextRoad.color = car.color
+                    #nextRoad.color = (0,0,255)
                     #car.x+=10#NEEDS TO BE CHANGED
                     car.x = nextRoad.x
                     car.y = nextRoad.y
