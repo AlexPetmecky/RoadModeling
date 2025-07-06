@@ -17,6 +17,9 @@ class DrawRoads:
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+
+        self.speedCheck = 0
+
         #pygame.time.delay(2000)
     def setRoads(self,roads):
         self.roads = roads
@@ -62,6 +65,8 @@ class DrawRoads:
 
     def updateCars(self):
         print(self.roads.nodes(data=True))
+        #print("HERE")
+        #print(self.clock.tick)
         for car in self.cars:
             print(car.x, car.y, car.currentElevation)
             try:
@@ -70,20 +75,21 @@ class DrawRoads:
                 print("Possible Nodes: ",carNodes)
 
                 road = carNodes[0]
-                #print(road)
-                nextRoads = list(self.roads.successors(road))
-                print("Possible roads: ",nextRoads)
-                nextRoad = random.choice(nextRoads)
-                if nextRoad.color == nextRoad.origionalColor:
-                    #road.color = (255,255,255)
-                    road.color = road.origionalColor
-                    nextRoad.color = car.color
-                    #nextRoad.color = (0,0,255)
-                    #car.x+=10#NEEDS TO BE CHANGED
-                    car.x = nextRoad.x
-                    car.y = nextRoad.y
-                    car.currentElevation = nextRoad.elevation
-                print("MOVING")
+                if self.speedCheck % road.roadSpeed == 0:
+                    #print(road)
+                    nextRoads = list(self.roads.successors(road))
+                    print("Possible roads: ",nextRoads)
+                    nextRoad = random.choice(nextRoads)
+                    if nextRoad.color == nextRoad.origionalColor:
+                        #road.color = (255,255,255)
+                        road.color = road.origionalColor
+                        nextRoad.color = car.color
+                        #nextRoad.color = (0,0,255)
+                        #car.x+=10#NEEDS TO BE CHANGED
+                        car.x = nextRoad.x
+                        car.y = nextRoad.y
+                        car.currentElevation = nextRoad.elevation
+                    print("MOVING")
             except Exception as e:
                 print(e)
                 print("NOT MOVING")
@@ -112,3 +118,8 @@ class DrawRoads:
         self.updateCars()
         pygame.display.update()
         self.clock.tick(self.refreshRate)
+        self.speedCheck += 1
+        if self.speedCheck >= 2520:
+            self.speedCheck = 0
+        #print("HERE")
+        #print(self.clock.tick(self.refreshRate))
