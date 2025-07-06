@@ -163,6 +163,28 @@ class BuildRoadNetwork:
         return roads
 
 
+    def arcWithElevationChange(self,x0,y0,radius=0,num_points=0,angle=0,width=5,height=5,elevationStart=0,elevationEnd=0):
+        elevations = self.getEquidistantPoints(elevationStart, elevationEnd, num_points)
+        roads = []
+        w = width
+        h = height
+        fx = 0
+        fy = 1
+        lx = 1
+        ly = 0
+
+        for t in range(num_points):
+            radians = math.radians(angle)
+            sub_angle = (t / 10) * radians
+            xi = x0 + radius * (math.sin(sub_angle) * fx + (1 - math.cos(sub_angle)) * (-lx))
+            yi = y0 + radius * (math.sin(sub_angle) * fy + (1 - math.cos(sub_angle)) * (-ly))
+            r = Road(xi, yi, w, h,elevation=round(elevations[t]))
+            roads.append(r)
+
+            self.RoadNetwork.add_node(r, x=xi, y=yi,elevation=round(elevations[t]))
+        print("ROADS: ", len(roads))
+        return roads
+
 
 
     def setEdges(self,roads,wraps=False):
@@ -207,8 +229,22 @@ class BuildRoadNetwork:
         #r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
         #self.setEdges(r1,wraps=True)
         #self.setEdges(r2,wraps=True)
-        r1 = self.segmentWithElevationChange(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=0,elevationEnd=100)
-        self.setEdges(r1,True)
+
+        #r1 = self.segmentWithElevationChange(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=0,elevationEnd=100)
+        #self.setEdges(r1,True)
+
+        r1 = self.setSegment(50,100,"N",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
+        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
+        self.setEdges(r1,wraps=False)
+        self.setEdges(r2,wraps=False)
+
+        r3 = self.arcWithElevationChange(101,51,50,10,90,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=100,elevationEnd=0)
+        self.setEdges(r3)
+        self.make_edge(r3[-1],r1[0])
+        self.make_edge(r2[-1],r3[0])
+        self.make_edge(r1[-1],r2[0])
+
+
         return self.RoadNetwork
 
 
