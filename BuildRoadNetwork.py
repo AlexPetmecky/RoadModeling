@@ -91,7 +91,7 @@ class BuildRoadNetwork:
 
         return self.RoadNetwork
 
-    def getArc(self,x0,y0,radius=0,num_points=0,angle=0,width=5,height=5):
+    def getArc(self,x0,y0,radius=0,num_points=0,angle=0,width=5,height=5,elevation=0,roadspeed=1):
         roads = []
         w = width
         h = height
@@ -105,24 +105,24 @@ class BuildRoadNetwork:
             sub_angle = (t / 10) * radians
             xi = x0 + radius * (math.sin(sub_angle) * fx + (1 - math.cos(sub_angle)) * (-lx))
             yi = y0 + radius * (math.sin(sub_angle) * fy + (1 - math.cos(sub_angle)) * (-ly))
-            r = Road(xi, yi, w, h)
+            r = Road(xi, yi, w, h,elevation=elevation,roadSpeed=roadspeed)
             roads.append(r)
             self.RoadNetwork.add_node(r, x=xi, y=yi)
         print("ROADS: ",len(roads))
         return roads
 
-    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevation=0):
+    def setSegment(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevation=0,roadspeed=1):
         direction_function = self.action_functions[direction]
         roads = []
         x = startX
         y = startY
-        r = Road(x, y, width, height,elevation=elevation)
+        r = Road(x, y, width, height,elevation=elevation,roadSpeed=roadspeed)
         #roads.append(r)
         roads.append(r)
         self.RoadNetwork.add_node(r, x=x, y=y,elevation=elevation)
         for i in range(segmentNumber - 1):
             x, y = direction_function(x, y, width, height)
-            r = Road(x, y, width, height,elevation=elevation)
+            r = Road(x, y, width, height,elevation=elevation,roadSpeed=roadspeed)
             roads.append(r)
             self.RoadNetwork.add_node(r, x=x, y=y,elevation=elevation)
         print("LEN OF ROADS: ", len(roads))
@@ -134,7 +134,7 @@ class BuildRoadNetwork:
         #if wraps:
         #    self.RoadNetwork.add_edge(roads[len(roads) - 1], roads[0])
 
-    def segmentWithElevationChange(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevationStart=0,elevationEnd=0):
+    def segmentWithElevationChange(self,startX = 0,startY=0,direction = "E",segmentNumber = 5,width = 5,height = 5,elevationStart=0,elevationEnd=0,roadspeed=1):
         #x = x1 + (x2 - x1) * t
         #y = y1 + (y2 - y1) * t
 
@@ -148,7 +148,7 @@ class BuildRoadNetwork:
         roads = []
         x = startX
         y = startY
-        r = Road(x, y, width, height, elevation=elevations[0])
+        r = Road(x, y, width, height, elevation=elevations[0],roadSpeed=roadspeed)
         # roads.append(r)
         roads.append(r)
         self.RoadNetwork.add_node(r, x=x, y=y, elevation=elevationStart)
@@ -156,14 +156,14 @@ class BuildRoadNetwork:
             #elevationCurrent = elevationStep * (i+2)
 
             x, y = direction_function(x, y, width, height)
-            r = Road(x, y, width, height, elevation=round(elevations[i+1]))
+            r = Road(x, y, width, height, elevation=round(elevations[i+1]),roadSpeed=roadspeed)
             roads.append(r)
             self.RoadNetwork.add_node(r, x=x, y=y, elevation=round(elevations[i+1]))
         print("LEN OF ROADS: ", len(roads))
         return roads
 
 
-    def arcWithElevationChange(self,x0,y0,radius=0,num_points=0,angle=0,width=5,height=5,elevationStart=0,elevationEnd=0):
+    def arcWithElevationChange(self,x0,y0,radius=0,num_points=0,angle=0,width=5,height=5,elevationStart=0,elevationEnd=0,roadspeed=1):
         elevations = self.getEquidistantPoints(elevationStart, elevationEnd, num_points)
         roads = []
         w = width
@@ -178,7 +178,7 @@ class BuildRoadNetwork:
             sub_angle = (t / 10) * radians
             xi = x0 + radius * (math.sin(sub_angle) * fx + (1 - math.cos(sub_angle)) * (-lx))
             yi = y0 + radius * (math.sin(sub_angle) * fy + (1 - math.cos(sub_angle)) * (-ly))
-            r = Road(xi, yi, w, h,elevation=round(elevations[t]))
+            r = Road(xi, yi, w, h,elevation=round(elevations[t]),roadSpeed=roadspeed)
             roads.append(r)
 
             self.RoadNetwork.add_node(r, x=xi, y=yi,elevation=round(elevations[t]))
@@ -233,12 +233,12 @@ class BuildRoadNetwork:
         #r1 = self.segmentWithElevationChange(50,10,"S",10,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=0,elevationEnd=100)
         #self.setEdges(r1,True)
 
-        r1 = self.setSegment(50,100,"N",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0)
-        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100)
+        r1 = self.setSegment(50,100,"N",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=0,roadspeed=6)
+        r2 = self.setSegment(10,50,"E",10,ROAD_WIDTH,ROAD_HEIGHT,elevation=100,roadspeed=4)
         self.setEdges(r1,wraps=False)
         self.setEdges(r2,wraps=False)
 
-        r3 = self.arcWithElevationChange(101,51,50,10,90,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=100,elevationEnd=0)
+        r3 = self.arcWithElevationChange(101,51,50,10,90,ROAD_WIDTH,ROAD_HEIGHT,elevationStart=100,elevationEnd=0,roadspeed=10)
         self.setEdges(r3)
         self.make_edge(r3[-1],r1[0])
         self.make_edge(r2[-1],r3[0])
