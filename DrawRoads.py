@@ -53,6 +53,7 @@ class DrawRoads:
         self.cars = cars
         #for x,y in self.roads.nodes()(data=True):
         #    print(x,y)
+        print("Roads: ",self.roads.nodes(data=True))
         for car in cars:
             #print(car.x,car.y)
             carNodes = [x for x, y in self.roads.nodes(data=True) if y['x'] == car.x and y['y'] == car.y and y['elevation'] == car.currentElevation]
