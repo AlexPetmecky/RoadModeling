@@ -34,8 +34,8 @@ if __name__ == '__main__':
     #cars = [car,car2,car3,car4,car5]
 
     #c = Car(50,10,ROAD_WIDTH,ROAD_HEIGHT,color=(0,255,255),currentElevation=0)
-    c2 = Car(200,50,ROAD_WIDTH,ROAD_HEIGHT, color=(255,0,255),currentElevation=0)
-    c3 = Car(100, 80, ROAD_WIDTH, ROAD_HEIGHT, color=(255, 0, 255), currentElevation=0)
+    c2 = Car(200,100,ROAD_WIDTH,ROAD_HEIGHT, color=(255,0,255),currentElevation=0)
+    c3 = Car(100, 130, ROAD_WIDTH, ROAD_HEIGHT, color=(255, 0, 255), currentElevation=0)
     cars = [c2,c3]
     dr.setCars(cars)
 

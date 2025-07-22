@@ -103,6 +103,7 @@ class Paver:
         pass
 
     def makeArc(self,start:tuple[float,float],end:tuple[float,float],angle=90,numPoints=1,width=5,height=5,elevationStart=0,elevationEnd=0,roadspeed=1,fx=0,fy=1,lx=1,ly=0):
+        '''DOES NOT SET EDGES'''
         #https://stackoverflow.com/questions/14384217/how-to-find-points-on-the-circumference-of-a-arc-knowing-a-start-point-an-end-p
         elevations = self.getEquidistantValues(elevationStart, elevationEnd, numPoints)
 
@@ -117,13 +118,13 @@ class Paver:
         points = []
         for t in range(numPoints):
             sub_angle = (t/numPoints)*radians
-            #xi = x0 + radius * (math.sin(sub_angle) * fx + (1 - math.cos(sub_angle)) * (-lx))
-            #yi = y0 + radius * (math.sin(sub_angle) * fy + (1 - math.cos(sub_angle)) * (-ly))
+            xi = x0 + radius * (math.sin(sub_angle) * fx + (1 - math.cos(sub_angle)) * (-lx))
+            yi = y0 + radius * (math.sin(sub_angle) * fy + (1 - math.cos(sub_angle)) * (-ly))
 
             #xi = x0 + radius * (math.sin(sub_angle) + (1 - math.cos(sub_angle)) )
             #yi = y0 + radius * (math.sin(sub_angle) + (1 - math.cos(sub_angle)) )
-            xi = cx + radius * math.cos(sub_angle)
-            yi = cy + radius * math.sin(sub_angle)
+            #xi = cx + radius * math.cos(sub_angle)
+            #yi = cy + radius * math.sin(sub_angle)
             r = Road(xi,yi,width=width,height=height,elevation=round(elevations[t]),roadSpeed=roadspeed)
             roads.append(r)
             points.append((xi,yi))
@@ -137,6 +138,7 @@ class Paver:
 
 
     def get_Center_And_Radius_From_Points_And_Angle(self,start:tuple[float,float],end:tuple[float,float],angle:float):
+        '''Returns cx,cy,r'''
         #this function needs to be tested more
         #https://math.stackexchange.com/questions/1144159/parametric-equation-of-an-arc-with-given-radius-and-two-points
         x_start = start[0]
@@ -177,8 +179,8 @@ class Paver:
         #for road in roads:
         #self.setEdges(roads,wraps=True)
 
-        westStart = (200, 50)
-        westEnd = (50, 50)
+        westStart = (200, 100)
+        westEnd = (50, 100)
         mainLaneCount = 2
         space_between_lanes = ROAD_HEIGHT
 
@@ -204,24 +206,69 @@ class Paver:
 
         midPoint = (westStart[0]+westEnd[0]) /2 #using westlanes 0 to get the first lane of all lanes
         print("midpoint: ",midPoint)
-        offset = (mainLaneCount * ROAD_WIDTH) + (space_between_lanes/2)
+        #offset = (mainLaneCount * ROAD_WIDTH) + (space_between_lanes/2)
+        offset = ((space_between_lanes) /2 ) + mainLaneCount* ROAD_WIDTH
+
         print("offset: ",offset)
         #len(westLanes[0])
-        space_used_by_eastwest = ROAD_HEIGHT * (mainLaneCount*2) + space_between_lanes
-        print("space_used_by_eastwest: ",space_used_by_eastwest)
-        y_start_south = westEnd[0] + (len(westLanes[0]) - space_used_by_eastwest)
+        print("len(westLanes[0]): ",len(westLanes[0]))
+        print("space_between_lanes: ",space_between_lanes)
+        #space_used_by_eastwest = ROAD_HEIGHT * (mainLaneCount*2) + space_between_lanes
+        segments_used_by_eastwest = (mainLaneCount * 2) + (space_between_lanes/ ROAD_HEIGHT)
+        y_south_start_offset_segments = (len(westLanes[0]) - segments_used_by_eastwest) / 2
+        print("y_south_start_offset_segments: ",y_south_start_offset_segments)
+        #print("space_used_by_eastwest: ",space_used_by_eastwest)
+        y_start_south =  westEnd[1] - (y_south_start_offset_segments * ROAD_HEIGHT)
+        print("y_start_south: ",y_start_south)
+
+        #exit()
+
         print("y_start_south: ",y_start_south)
 
 
 
-        southStart = (midPoint-offset,y_start_south)
+        southStart = (midPoint-offset ,y_start_south) #- (mainLaneCount * ROAD_WIDTH)
         print("southStart: ",southStart)
         print("len(westLanes[0]): ",len(westLanes[0]))
-        southEnd = (midPoint-offset,y_start_south + (len(westLanes[0])*ROAD_HEIGHT))
+        southEnd = (midPoint-offset,y_start_south + (len(westLanes[0])*ROAD_HEIGHT)) #- (mainLaneCount * ROAD_WIDTH)
         print("southEnd: ",southEnd)
 
         #exit()
         southLanes = self.make_lane_with_endpoints(southStart, southEnd, roadWidth=ROAD_WIDTH, roadHeight=ROAD_HEIGHT,laneCount=2, direction="S",elevationStart=100,elevationEnd=100)
         print(southLanes)
+
+
+        northStart = (midPoint+(space_between_lanes / 2),southEnd[1])
+        northEnd = (midPoint + (space_between_lanes / 2), southStart[1])
+
+        print("westStart: ",westStart)
+        print("westEnd: ",westEnd)
+
+        print("southStart: ",southStart)
+        print("southEnd: ",southEnd)
+        print("northStart: ",northStart)
+        print("northEnd: ",northEnd)
         #exit()
+        northLanes = self.make_lane_with_endpoints(northStart, northEnd, roadWidth=ROAD_WIDTH, roadHeight=ROAD_HEIGHT,laneCount=2, direction="N",elevationStart=100,elevationEnd=100)
+        #exit()
+
+
+        #cx,cy,r = self.get_Center_And_Radius_From_Points_And_Angle(southStart,westEnd,90)
+        arc_offset_adjustment = 1
+        #south_t
+        southToWest = self.makeArc(start=southStart,end=westEnd,angle=90,numPoints=10,width=ROAD_WIDTH,height=ROAD_HEIGHT,elevationStart=100,elevationEnd=0,roadspeed=1,fx=0,fy=1,lx=1,ly=0)
+        self.setEdges(southToWest)
+
+
+        westToNorth = self.makeArc(start=westStart, end=northEnd, angle=-90, numPoints=10, width=ROAD_WIDTH, height=ROAD_HEIGHT,elevationStart=0, elevationEnd=100, roadspeed=1,fx=1,fy=0,lx=0,ly=1)
+        self.setEdges(westToNorth)
+
+        northStartArc = (northStart[0] + (mainLaneCount - 1) * ROAD_WIDTH,northStart[1])
+        northToEast = self.makeArc(start=northStartArc, end=eastEnd, angle=90, numPoints=10, width=ROAD_WIDTH, height=ROAD_HEIGHT,elevationStart=100, elevationEnd=0, roadspeed=1,fx=0,fy=-1,lx=-1,ly=0)
+        self.setEdges(northToEast)
+
+        eastStartArc = (eastStart[0] , eastStart[1] + (mainLaneCount - 1) * ROAD_HEIGHT)
+        eastToSouth = self.makeArc(start=eastStartArc, end=southEnd, angle=-90, numPoints=10, width=ROAD_WIDTH, height=ROAD_HEIGHT,elevationStart=0, elevationEnd=100, roadspeed=1,fx=-1,fy=0,lx=0,ly=-1)
+        self.setEdges(eastToSouth)
+
         return self.RoadNetwork
